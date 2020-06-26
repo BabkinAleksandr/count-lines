@@ -31,7 +31,7 @@ function readFilesInDirectory(dir) {
 
       for (let i = 0; i < dirents.length; i++) {
         const dirent = dirents[i]
-        const pathname = path.resolve(__dirname, dir, dirent.name)
+        const pathname = path.resolve(dir, dirent.name)
 
         if (dirent.isDirectory()) {
           count += await readFilesInDirectory(pathname)
@@ -47,7 +47,7 @@ function readFilesInDirectory(dir) {
 
 async function count() {
   const [dir = './'] = process.argv.slice(2)
-  const totalCount = await readFilesInDirectory(path.resolve(__dirname, dir))
+  const totalCount = await readFilesInDirectory(dir)
 
   console.log('Total lines count:', totalCount)
   process.exit()
