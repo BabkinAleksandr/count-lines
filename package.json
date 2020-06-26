@@ -1,0 +1,16 @@
+{
+  "name": "linezz",
+  "version": "0.0.1",
+  "description": "Count code lines in your project",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BabkinAleksandr/linezz.git"
+  },
+  "keywords": [
+    "count",
+    "lines"
+  ],
+  "author": "Aleksandr Babkin <a.i.babkin@yandex.ru>",
+  "license": "ISC"
+}
