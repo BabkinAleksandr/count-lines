@@ -46,20 +46,10 @@ function readFilesInDirectory(dir) {
 }
 
 async function count() {
-  const [dir] = process.argv.slice(2)
-  const before = Date.now()
-
-  if (!dir) {
-    console.error('No directory provided')
-
-    return process.exit(1)
-  }
-
+  const [dir = './'] = process.argv.slice(2)
   const totalCount = await readFilesInDirectory(path.resolve(__dirname, dir))
 
   console.log('Total lines count:', totalCount)
-  console.log('time', Date.now() - before)
-
   process.exit()
 }
 

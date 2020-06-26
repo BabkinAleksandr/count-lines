@@ -13,11 +13,19 @@ npm install -g linezz
 ### Use
 
 ```
-linezz ./some-dir
+linezz <your-dir>
+```
+
+Or use in directory without arguments
+
+```
+cd <your-dir>
+linezz
 ```
 
 Or use **npx** instead
 
 ```
-npm linezz ./some-dir
+npx linezz <your-dir>
+
 ```
