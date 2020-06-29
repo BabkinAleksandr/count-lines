@@ -14,9 +14,7 @@ function countLinesInFile(filePath) {
             }
           }
       })
-      .on('end', () => {
-        resolve(count)
-      })
+      .on('end', () => resolve(count))
   })
 }
 
@@ -33,12 +31,28 @@ function readFilesInDirectory(dir) {
         const dirent = dirents[i]
         const pathname = path.resolve(dir, dirent.name)
 
-        if (dirent.isDirectory()) {
-          count += await readFilesInDirectory(pathname)
-        } else {
-          count += await countLinesInFile(pathname)
-        }
+        count += dirent.isDirectory()
+          ? await readFilesInDirectory(pathname)
+          : await countLinesInFile(pathname)
+
       }
+
+      resolve(count)
+    })
+  })
+}
+
+function readDirOrFile(dirOrFile) {
+  // check if path in argument is file
+  return new Promise((resolve) => {
+    fs.stat(dirOrFile, async (err, stats) => {
+      if (err) {
+        throw err
+      }
+
+      const count = stats.isDirectory()
+        ? await readFilesInDirectory(dirOrFile)
+        : await countLinesInFile(dirOrFile)
 
       resolve(count)
     })
@@ -47,7 +61,7 @@ function readFilesInDirectory(dir) {
 
 async function count() {
   const [dir = './'] = process.argv.slice(2)
-  const totalCount = await readFilesInDirectory(dir)
+  const totalCount = await readDirOrFile(dir)
 
   console.log('Total lines count:', totalCount)
   process.exit()
