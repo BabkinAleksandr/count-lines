@@ -60,9 +60,20 @@ function readDirOrFile(dirOrFile) {
   })
 }
 
+async function handleArgs(args = []) {
+  const paths = [args[0] || './'].concat(args.slice(1))
+
+  let count = 0
+
+  for (let i = 0; i < paths.length; i++) {
+    count += await readDirOrFile(paths[i])
+  }
+
+  return count
+}
+
 async function count() {
-  const [dir = './'] = process.argv.slice(2)
-  const totalCount = await readDirOrFile(dir)
+  const totalCount = await handleArgs(process.argv.slice(2))
 
   console.log(RESULT_TEXT, totalCount)
   process.exit()
@@ -72,6 +83,7 @@ module.exports = {
   countLinesInFile,
   readFilesInDirectory,
   readDirOrFile,
+  handleArgs,
   count,
   RESULT_TEXT,
 }
