@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "jest",
-    "publish": "npm run test && npm publish --access public"
+    "pub": "npm run test && npm publish --access public"
   },
   "devDependencies": {
     "husky": "^4.2.5",
