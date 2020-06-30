@@ -4,7 +4,14 @@ const cp = require('child_process')
 const uuid = require('uuid').v4
 const random = require('lodash/random')
 
-const { countLinesInFile, readFilesInDirectory, readDirOrFile, count, RESULT_TEXT } = require('../src')
+const {
+  countLinesInFile,
+  readFilesInDirectory,
+  readDirOrFile,
+  handleArgs,
+  count,
+  RESULT_TEXT,
+} = require('../src')
 
 const { TEMP_PATH, ITERATIONS } = require('./constants')
 const {
@@ -62,6 +69,41 @@ describe('readDirOrFile', () => {
   })
 })
 
+describe('handleArgs', () => {
+  beforeEach(cleanDirs)
+
+  test('works properly with no args', async () => {
+    // no args means current dir
+    process.chdir(TEMP_PATH)
+  
+    const fileName = `${TEMP_PATH}/plain/${uuid()}`
+    const linesGenerated = await generateFileWithLines(fileName)
+    const linesCounted = await handleArgs()
+    
+    expect(linesCounted).toBe(linesGenerated)
+
+    process.chdir('../')
+  })
+
+  test('works properly with only one arg', async () => {
+    const fileName = `${TEMP_PATH}/plain/${uuid()}`
+    const linesGenerated = await generateFileWithLines(fileName)
+    const linesCounted = await handleArgs([TEMP_PATH])
+    
+    expect(linesCounted).toBe(linesGenerated)
+  })
+
+  test('works properly with several args', async () => {
+    const fileName = `${TEMP_PATH}/plain/${uuid()}`
+    const dirName = `${TEMP_PATH}/nested`
+    const fileLines = await generateFileWithLines(fileName)
+    const dirsLines = await generateDirWithFiles(dirName)
+    const linesCounted = await handleArgs([fileName, dirName])
+
+    expect(linesCounted).toBe(fileLines + dirsLines)
+  })
+})
+
 describe('cli', () => {
   beforeEach(cleanDirs)
 
@@ -71,7 +113,7 @@ describe('cli', () => {
     // generate files and nested file structure
     for (let i = 0; i < ITERATIONS; i++) {
       linesCount += await generateDirWithFiles(`${TEMP_PATH}/nested`)
-      linesCount += await generateFileWithLines(`${TEMP_PATH}/${uuid()}`)
+      linesCount += await generateFileWithLines(`${TEMP_PATH}/plain/${uuid()}`)
     }
 
     return linesCount
@@ -86,6 +128,7 @@ describe('cli', () => {
 
   test('counts lines for existing dir, if no dir provided', async () => {
     const linesGenerated = await generateFiles()
+    // change current dir to /tmp
     const output = await callCLI({ command: '../../linezz.js', cwd: TEMP_PATH })
 
     expect(output.trim()).toBe(`${RESULT_TEXT} ${linesGenerated}`)
@@ -99,6 +142,13 @@ describe('cli', () => {
 
       expect(output.trim()).toBe(`${RESULT_TEXT} ${linesGenerated}`)
     }
+  })
+
+  test('supports several args', async () => {
+    const linesGenerated = await generateFiles()
+    const output = await callCLI({ args: [`${TEMP_PATH}/plain`, `${TEMP_PATH}/nested`] })
+
+    expect(output.trim()).toBe(`${RESULT_TEXT} ${linesGenerated}`)
   })
 
   test('exits with success code (zero)', async (next) => {
