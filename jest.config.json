@@ -1,0 +1,7 @@
+{
+  "name": "linezz",
+  "verbose": true,
+  "moduleDirectories": ["node_modules"],
+  "moduleFileExtensions": ["js"],
+  "testMatch": [ "**/?(*.)test.js?(x)"]
+}
