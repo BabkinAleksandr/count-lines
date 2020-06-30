@@ -1,6 +1,6 @@
 ## Linezz
 
-[![](https://img.shields.io/badge/npm-0.0.5-green)](https://www.npmjs.com/package/linezz)
+[![](https://img.shields.io/badge/npm-0.0.6-green)](https://www.npmjs.com/package/linezz)
 
 Simple, fast and light tool for counting code lines in entire directory (with subdirs) or just a file.
 
