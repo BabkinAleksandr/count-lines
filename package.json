@@ -1,6 +1,6 @@
 {
   "name": "linezz",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Count code lines in your project",
   "main": "./linezz.js",
   "license": "MIT",
