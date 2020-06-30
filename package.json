@@ -2,8 +2,8 @@
   "name": "linezz",
   "version": "0.0.4",
   "description": "Count code lines in your project",
-	"main": "./index.js",
-	"license": "MIT",
+  "main": "./linezz.js",
+  "license": "MIT",
   "bin": {
     "linezz": "bin/linezz"
   },
@@ -15,5 +15,20 @@
     "count",
     "lines"
   ],
-  "author": "Aleksandr Babkin <a.i.babkin@yandex.ru>"
+  "author": "Aleksandr Babkin <a.i.babkin@yandex.ru>",
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run test"
+    }
+  },
+  "scripts": {
+    "test": "jest",
+    "publish": "npm run test && npm publish --access public"
+  },
+  "devDependencies": {
+    "husky": "^4.2.5",
+    "jest": "^26.1.0",
+    "lodash": "^4.17.15",
+    "uuid": "^8.2.0"
+  }
 }
