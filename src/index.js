@@ -2,6 +2,8 @@ const fs = require('fs')
 const readline = require('readline')
 const path = require('path')
 
+const RESULT_TEXT = 'Total lines count:'
+
 function countLinesInFile(filePath) {
   let count = 0
 
@@ -34,7 +36,6 @@ function readFilesInDirectory(dir) {
         count += dirent.isDirectory()
           ? await readFilesInDirectory(pathname)
           : await countLinesInFile(pathname)
-
       }
 
       resolve(count)
@@ -63,8 +64,14 @@ async function count() {
   const [dir = './'] = process.argv.slice(2)
   const totalCount = await readDirOrFile(dir)
 
-  console.log('Total lines count:', totalCount)
+  console.log(RESULT_TEXT, totalCount)
   process.exit()
 }
 
-count()
+module.exports = {
+  countLinesInFile,
+  readFilesInDirectory,
+  readDirOrFile,
+  count,
+  RESULT_TEXT,
+}
