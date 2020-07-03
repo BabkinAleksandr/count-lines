@@ -22,8 +22,8 @@
     }
   },
   "scripts": {
-		"test": "jest",
-		"perf": "node ./tests/performance",
+    "test": "jest",
+    "perf": "node ./tests/performance",
     "pub": "npm run test && npm publish --access public"
   },
   "devDependencies": {

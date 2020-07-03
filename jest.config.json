@@ -3,5 +3,6 @@
   "verbose": true,
   "moduleDirectories": ["node_modules"],
   "moduleFileExtensions": ["js"],
-  "testMatch": [ "**/?(*.)test.js?(x)"]
+	"testMatch": [ "**/?(*.)test.js?(x)"],
+	"testEnvironment": "node"
 }
