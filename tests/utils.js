@@ -23,9 +23,15 @@ function removeDirs() {
   cp.execSync(`rm -rf ${TEMP_PATH}`)
 }
 
-function generateFileWithLines(fileName) {
+function generateFileWithLines(fileName, lines, isStaticEmptyLines) {
+  const isLineEmpty = (i) => (
+    isStaticEmptyLines
+      ? i % 10 === 0 && i > 0 // every 10th line is empty
+      : Math.random() > 0.5 // generate empty lines randomly
+  )
+
   return new Promise((resolve) => {
-    const linesCount = random(1, 10000)
+    const linesCount = lines || random(1, 10000)
     const stream = fs.createWriteStream(fileName, { flags: 'a+', emitClose: true })
 
     stream.on('close', () => {
@@ -33,7 +39,7 @@ function generateFileWithLines(fileName) {
     })
 
     for (let i = 0; i < linesCount; i++) {
-      const chunk = Math.random() > 0.5 // generate empty lines randomly
+      const chunk = isLineEmpty(i) 
         ? EOL
         : EOL.padStart(10, '0') // 10 symbols
 
@@ -44,25 +50,61 @@ function generateFileWithLines(fileName) {
   })
 }
 
-function generateDirWithFiles(dir) {
+async function generateDirWithFiles(dir) {
+  let count = 0
+  let pathname = dir
+
+  for (let i = 0; i < 10; i++) {
+    const dirName = `${pathname}/${uuid()}`
+    const fileName = uuid()
+
+    const file = `${pathname}/${fileName}`
+    count += await generateFileWithLines(file)
+
+    cp.execSync(`mkdir ${dirName}`)
+    pathname = dirName
+  }
+
+  return count
+}
+
+async function generateStaticFS() {
+  const LINES_COUNT = 1000
   let count = 0
 
-  return new Promise(async (resolve) => {
-    let pathname = dir
+  async function generateFiles(iterations) {
+    let count = 0
+    const pathname = `${TEMP_PATH}/plain`
 
-    for (let i = 0; i < 10; i++) {
-      const dirName = `${pathname}/${uuid()}`
-      const fileName = uuid()
+    for (let i = 0; i < iterations; i++) {
+      const fileName = `${pathname}/${i}.file`
 
-      const file = `${pathname}/${fileName}`
-      count += await generateFileWithLines(file)
+      count += await generateFileWithLines(fileName, LINES_COUNT, true)
+    }
+    
+    return count
+  }
 
+  async function generateDirs(iterations) {
+    let count = 0
+    let pathname = `${TEMP_PATH}/nested`
+
+    for (let i = 0; i < iterations; i++) {
+      const dirName = `${pathname}/${i}.dir`
+      const fileName = `${pathname}/${i}.file`
+
+      count += await generateFileWithLines(fileName, LINES_COUNT, true)
       cp.execSync(`mkdir ${dirName}`)
       pathname = dirName
     }
 
-    resolve(count)
-  })
+    return count
+  }
+
+  count += await generateFiles(5)
+  count += await generateDirs(5)
+
+  return count
 }
 
 function callCLI({ args = [], command = '../linezz.js', cwd = './' }) {
@@ -73,7 +115,6 @@ function callCLI({ args = [], command = '../linezz.js', cwd = './' }) {
     linezz.stdout.on('data', resolve)
     linezz.stderr.on('data', reject)
   })
-  
 }
 
 module.exports = {
@@ -82,5 +123,6 @@ module.exports = {
   removeDirs,
   generateFileWithLines,
   generateDirWithFiles,
+  generateStaticFS,
   callCLI,
 }
