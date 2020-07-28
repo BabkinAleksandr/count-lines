@@ -55,3 +55,14 @@ npm i
 # Run script
 npm run test
 ```
+
+### Performance
+
+To start performance test run:
+
+```bash
+npm run perf
+```
+
+For this test the static file system generated (the same for each test).
+The number is interesting not as absolute, but as relative for 
